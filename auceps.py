@@ -116,9 +116,37 @@ def get_countries(addresses):
             iso_code = country['iso_code']
             country = f'{name} ({iso_code})'
 
-            countries[country] += 1
+            countries[country] += addresses[address]
 
     return countries
+
+
+def get_names(entries):
+    '''
+    Gets user names for valid and invalid users and returns two
+    counters.
+    '''
+
+    valid_users = collections.Counter()
+    invalid_users = collections.Counter()
+
+    for entry in entries:
+        if 'invalid user' in entry.message:
+            username = entry.message.replace(
+                'Failed password for invalid user', ''
+            )
+            username = username.split(' ')[0]
+
+            invalid_users[username] += 1
+        else:
+            username = entry.message.replace(
+                'Failed password', ''
+            )
+            username = username.split(' ')[0]
+
+            valid_users[username] += 1
+
+        return valid_users, invalid_users
 
 
 if __name__ == '__main__':
@@ -139,5 +167,8 @@ if __name__ == '__main__':
 
     addresses = get_ip_addresses(entries)
     countries = get_countries(addresses)
+    valid_users, invalid_users = get_names(entries)
 
     print(countries)
+    print(valid_users)
+    print(invalid_users)
