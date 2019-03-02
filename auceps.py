@@ -55,9 +55,18 @@ def parse_log(filename):
 
             entries.append(entry)
 
-            return entries
-
     return entries
+
+
+def might_be_nefarious(entry):
+    '''
+    Checks whether a log entry might be nefarious. A nefarious entry is
+    an entry that comes from `ssh`, and contains *either* invalid login
+    names, or an invalid password.
+    '''
+
+    failed_password = entry.message.startswith('Failed password')
+    return entry.process == 'sshd' and failed_password
 
 
 if __name__ == '__main__':
@@ -70,4 +79,8 @@ if __name__ == '__main__':
     for filename in args.INPUT:
         entries.extend(parse_log(filename))
 
-    print(entries)
+    print(f'Processed {len(entries)} log entries')
+
+    entries = list(filter(might_be_nefarious, entries))
+
+    print(f'After filtering, {len(entries)} log entries remain')
