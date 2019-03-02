@@ -9,6 +9,7 @@ import sys
 import numpy as np
 import pandas as pd
 
+import plotly.offline as po
 import plotly.plotly as py
 import plotly.graph_objs as go
 
@@ -50,4 +51,4 @@ if __name__ == '__main__':
     )
 
     figure = dict(data=data, layout=layout)
-    py.iplot(figure, validate=False, filename='ssh-incidents')
+    po.plot(figure, validate=False, image_filename='ssh-incidents.svg')
