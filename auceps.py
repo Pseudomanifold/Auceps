@@ -5,6 +5,8 @@
 
 
 import argparse
+import collections
+import geolite2
 import time
 import re
 
@@ -73,10 +75,11 @@ def might_be_nefarious(entry):
 def get_ip_addresses(entries):
     '''
     Collects IP addresses that are involved in potentially nefarious
-    things.
+    things. This functions returns a `collections.Counter()` object,
+    which permits further statistical insights.
     '''
 
-    addresses = set()
+    addresses = collections.Counter()
     re_addr = '.*from\s+([0-9\.]+)\s+.*'
 
     for entry in entries:
@@ -85,9 +88,37 @@ def get_ip_addresses(entries):
 
         if match:
             address = match.group(1)
-            addresses.add(address)
+            addresses[address] += 1
 
     return addresses
+
+
+def get_countries(addresses):
+    '''
+    Given a collection with IP addresses, looks up their countries and
+    creates a new counter object.
+    '''
+
+    reader = geolite2.geolite2.reader()
+    countries = collections.Counter()
+
+    for address in addresses:
+        data = reader.get(address)
+        if data:
+            if 'registered_country' in data.keys():
+                country = data['registered_country']
+            elif 'country' in data.keys():
+                country = data['country']
+            else:
+                print(f'Unable to query IP address {address}')
+                continue
+            name = country['names']['en']
+            iso_code = country['iso_code']
+            country = f'{name} ({iso_code})'
+
+            countries[country] += 1
+
+    return countries
 
 
 if __name__ == '__main__':
@@ -107,5 +138,6 @@ if __name__ == '__main__':
     print(f'After filtering, {len(entries)} log entries remain')
 
     addresses = get_ip_addresses(entries)
+    countries = get_countries(addresses)
 
-    print(addresses)
+    print(countries)
