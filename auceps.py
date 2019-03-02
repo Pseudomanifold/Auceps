@@ -133,20 +133,20 @@ def get_names(entries):
     for entry in entries:
         if 'invalid user' in entry.message:
             username = entry.message.replace(
-                'Failed password for invalid user', ''
+                'Failed password for invalid user ', ''
             )
             username = username.split(' ')[0]
 
             invalid_users[username] += 1
         else:
             username = entry.message.replace(
-                'Failed password', ''
+                'Failed password for ', ''
             )
             username = username.split(' ')[0]
 
             valid_users[username] += 1
 
-        return valid_users, invalid_users
+    return valid_users, invalid_users
 
 
 if __name__ == '__main__':
