@@ -6,6 +6,7 @@
 
 import argparse
 import time
+import re
 
 
 class LogEntry:
@@ -69,6 +70,26 @@ def might_be_nefarious(entry):
     return entry.process == 'sshd' and failed_password
 
 
+def get_ip_addresses(entries):
+    '''
+    Collects IP addresses that are involved in potentially nefarious
+    things.
+    '''
+
+    addresses = set()
+    re_addr = '.*from\s+([0-9\.]+)\s+.*'
+
+    for entry in entries:
+        message = entry.message
+        match = re.match(re_addr, message)
+
+        if match:
+            address = match.group(1)
+            addresses.add(address)
+
+    return addresses
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('INPUT', nargs='+', help='Input files')
@@ -84,3 +105,7 @@ if __name__ == '__main__':
     entries = list(filter(might_be_nefarious, entries))
 
     print(f'After filtering, {len(entries)} log entries remain')
+
+    addresses = get_ip_addresses(entries)
+
+    print(addresses)
