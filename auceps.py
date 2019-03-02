@@ -180,7 +180,19 @@ if __name__ == '__main__':
     countries = get_countries(addresses)
     valid_users, invalid_users = get_names(entries)
 
-    print(countries)
+    with open('/tmp/countries.csv', 'w') as f:
+        print('name,code,count', file=f)
+        for country in countries:
+            re_country = r'(.*)\s+\((.*)\)$'
+            match = re.match(re_country, country)
+
+            assert match
+
+            name = match.group(1)
+            code = match.group(2)
+            count = countries[country]
+
+            print(f'{name},{code},{count}', file=f)
 
     print_names('Valid users', valid_users, 10)
     print_names('Invalid users', invalid_users, 10)
