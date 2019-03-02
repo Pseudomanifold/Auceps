@@ -149,6 +149,17 @@ def get_names(entries):
     return valid_users, invalid_users
 
 
+def print_names(title, counter, n):
+
+    print(title, '\n')
+
+    m = sum(counter.values())
+    for name, count in counter.most_common(n):
+        print('- {} ({:2.2f})'.format(name, 100 * count / m))
+
+    print('')
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('INPUT', nargs='+', help='Input files')
@@ -170,5 +181,6 @@ if __name__ == '__main__':
     valid_users, invalid_users = get_names(entries)
 
     print(countries)
-    print(valid_users)
-    print(invalid_users)
+
+    print_names('Valid users', valid_users, 10)
+    print_names('Invalid users', invalid_users, 10)
