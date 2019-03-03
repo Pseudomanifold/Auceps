@@ -36,11 +36,16 @@ if __name__ == '__main__':
         reversescale = False,
         colorbar = dict(
             autotick = True,
-            title = 'Incidents (log-10)'),
+            title = dict(
+                text='<b>Incidents (log-10)</b>'),
+            ),
+            titleside = 'bottom',
       ) ]
 
     layout = dict(
-        title = 'Failed ssh access attempts',
+        title = '<b>Failed ssh access attempts</b>',
+        font = dict(family='Raleway', size=20),
+        margin = 5,
         geo = dict(
             showframe = False,
             showcoastlines = True,
@@ -51,4 +56,4 @@ if __name__ == '__main__':
     )
 
     figure = dict(data=data, layout=layout)
-    po.plot(figure, validate=False, image_filename='ssh-incidents.svg')
+    py.iplot(figure, validate=False, filename='ssh-incidents')

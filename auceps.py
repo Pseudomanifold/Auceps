@@ -180,6 +180,8 @@ if __name__ == '__main__':
     countries = get_countries(addresses)
     valid_users, invalid_users = get_names(entries)
 
+    print_names('Persistent addresses', addresses, 10)
+
     # FIXME: make output path configurable
     with open('/tmp/countries.csv', 'w') as f:
         print('name,code,count', file=f)
